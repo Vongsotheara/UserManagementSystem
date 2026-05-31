@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -33,7 +34,12 @@ public class User {
 	private Role role;
 	private Boolean active;
 	
+	private Boolean deleted = false; //if deleted = false => user is Active
+									//if deleted = true => user is deleted
+	private LocalDateTime deletedAt;
+	
 	@CreationTimestamp
+	@Column(updatable = false)
 	private LocalDateTime createdAt;
 	
 	@UpdateTimestamp

@@ -1,10 +1,12 @@
 package com.CRUDOperation.usermanangementsystem.service.impl;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
@@ -23,17 +25,17 @@ import com.CRUDOperation.usermanangementsystem.service.UserService;
 public class UserServiceImpl implements UserService{
 
 	@Autowired
-	private UserRepository userRepository;
+	private UserRepository userRepository; // To talk to database
 	
 	@Autowired
-	private UserMapper userMapper;
+	private UserMapper userMapper;	// To convert between DTOs and Entity
 	
 	@Override
 	public UserResponseDTO createUser(UserRequestDTO request) {
-		if(userRepository.existsByEmail(request.getEmail())) {
+		if(userRepository.existsByEmailAndDeletedFalse(request.getEmail())) {
 			throw new APIException("Email already exists: " + request.getEmail());
 		}
-		if(userRepository.existsByUsername(request.getUsername())) {
+		if(userRepository.existsByUsernameAndDeletedFalse(request.getUsername())) {
 			throw new APIException("Username alreay exists: " + request.getUsername());
 		}
 		User user = userMapper.toEntity(request);
@@ -72,7 +74,7 @@ public class UserServiceImpl implements UserService{
 	                .orElseThrow(() -> new ResourceNotFound("User not found with id: " + id));
 	        if (request.getEmail() != null &&
 	            !request.getEmail().equals(user.getEmail()) &&
-	            userRepository.existsByEmail(request.getEmail())) {
+	            userRepository.existsByEmailAndDeletedFalse(request.getEmail())) {
 	            throw new APIException("Email already exists: " + request.getEmail());
 	        }
 	        userMapper.updateEntity(request, user);
@@ -81,16 +83,29 @@ public class UserServiceImpl implements UserService{
 
 	@Override
 	public void deleteUser(Long id) {
-		if (!userRepository.existsById(id)) {
-            throw new ResourceNotFound("User not found with id: " + id);
-        }
-        userRepository.deleteById(id);
+		User user = userRepository.findByIdAndDeletedFalse(id)
+	         .orElseThrow(() -> new 
+	        ResourceNotFound("User not found with id: " + id));
+	    
+		user.setDeleted(true);	// mark as deleted
+	    user.setDeletedAt(LocalDateTime.now());	// record when deleted
+	    user.setActive(false);	// deactivate
+	    userRepository.save(user); // save to database
 		
 	}
 
-	
-
-	
-	
+	@Override
+	public UserResponseDTO restoreUser(Long id) {
+		User user = userRepository.findById(id)
+				.orElseThrow(() -> new 
+				ResourceNotFound("User not found with id: " + id));
+		if(!user.getDeleted()) {
+			throw new APIException("User is not deleted");
+		}
+		user.setDeleted(false);	// unmark deleted
+		user.setDeletedAt(null);	// clear deleted time
+		user.setActive(true);	// reactivate
+		return userMapper.toDTO(userRepository.save(user));
+	}
 
 }

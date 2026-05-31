@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -19,37 +20,41 @@ import com.CRUDOperation.usermanangementsystem.dto.UserResponseDTO;
 import com.CRUDOperation.usermanangementsystem.service.UserService;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping
 public class UserController {
 	@Autowired
 	private UserService userService;
 	
-	@PostMapping
+	@PostMapping("/api/users/create")
 	public ResponseEntity<UserResponseDTO> createUser(@RequestBody UserRequestDTO request){
 		return ResponseEntity.status(HttpStatus.CREATED)
 				.body(userService.createUser(request));
 	}
 	
-	@GetMapping("/{id}")
+	@GetMapping("/api/users/get-by/{id}   ")
 	public ResponseEntity<UserResponseDTO> getUserById(@PathVariable Long id){
 		return ResponseEntity.ok(userService.getUserById(id));
 	}
-	@GetMapping
+	@GetMapping("/api/users/get-all")
 	public ResponseEntity<PageDTO<UserResponseDTO>> getAllUsers(
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size){
 		return ResponseEntity.ok(userService.getAllUsers(page, size));
 	}
-	@PutMapping("/{id}")
+	@PutMapping("/api/users/update/{id}")
 	public ResponseEntity<UserResponseDTO> updateUser(
 			@PathVariable Long id,
 			@RequestBody UserRequestDTO request){
 		return ResponseEntity.ok(userService.updateUser(id, request));
 	}
-	@DeleteMapping("/{id}")
+	@DeleteMapping("/api/users/delete/{id}")
 	public ResponseEntity<String> deleteUser(@PathVariable Long id)	{
 		userService.deleteUser(id);
 		return ResponseEntity.ok("User delete successfully");
+	}
+	@PatchMapping("/api/users/restore/{id}")
+	public ResponseEntity<UserResponseDTO> restoreUser(@PathVariable Long id){
+		return ResponseEntity.ok(userService.restoreUser(id));
 	}
 			
 }

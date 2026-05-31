@@ -6,12 +6,14 @@ import com.CRUDOperation.usermanangementsystem.dto.UserResponseDTO;
 
 public interface UserService {
 	
-	
-	UserResponseDTO getUserById(Long id);
-	PageDTO<UserResponseDTO> getAllUsers(int page, int size);
-	UserResponseDTO updateUser(Long id, UserRequestDTO request);
+	UserResponseDTO createUser(UserRequestDTO request); //create new user
+	UserResponseDTO getUserById(Long id); //get 1 user
+	PageDTO<UserResponseDTO> getAllUsers(int page, int size); 
+	UserResponseDTO updateUser(Long id, UserRequestDTO request); 
 	void deleteUser(Long id);
-	UserResponseDTO createUser(UserRequestDTO request);
+	
+	//restore the deleted user
+	UserResponseDTO restoreUser(Long id);
 	
 
 }
