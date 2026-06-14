@@ -25,7 +25,7 @@ import com.CRUDOperation.usermanangementsystem.service.UserService;
 public class UserServiceImpl implements UserService{
 
 	@Autowired
-	private UserRepository userRepository; // To talk to database
+	private UserRepository userRepository; // talk to database
 	
 	@Autowired
 	private UserMapper userMapper;	// To convert between DTOs and Entity

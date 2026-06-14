@@ -24,5 +24,8 @@ public interface UserRepository extends JpaRepository<User, Long>{
 	
 	// only return users that are not deleted
 	Page<User> findByDeletedFalse(Pageable pageable);
+	
+	//for string security
+	Optional<User> findByUsernameAndDeletedFalse(String username);
 
 }
