@@ -42,3 +42,23 @@ Think of it as the bouncer at the door.
 (1) which routes are public vs protected,
 (2) what password encoder to use, 
 (3) how to plug in your JwtAuthFilter.
+
+************ Spring Security******
+to login and test in API: 
+- First-> in Create User: http://localhost:8080/auth/register
+then input the information of the user, will get the toke then paste the token to every Crud like 
+GET, PUT,DELET
+- Every other CRUD must input all the token: the toke is in the Authorization tap
+	. in the AUTH tap: choose Bearer Token then paste the token and click send button.
+***End Point
+Endpoint							Correct URL
+Get All                http://localhost:8080/api/users/get-all
+Get by ID              http://localhost:8080/api/users/get-by/1
+Create                 http://localhost:8080/api/users/create
+Update				   http://localhost:8080/api/users/update/1
+Delete                 http://localhost:8080/api/users/delete/1
+Restore                http://localhost:8080/api/users/restore/1
+
+***** Update on role-based authority set
+This update means the ADMIN can do every CRUD operation, despite the USER can only 
+view All users, and view user by id 
